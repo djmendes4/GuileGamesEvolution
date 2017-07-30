@@ -221,7 +221,7 @@ var Garden = {
 		image: {
 			width: function () {'use strict'; return '82px'; },
 			height: function () {'use strict'; return '82px'; },
-			link: function () {'use strict'; return './../assets/dirtpatch.png'; },
+			link: function () {'use strict'; return './../assets/earth_tile.png'; },
 			position: function () {'use strict'; return [-41, -41]; }
 		},
 		position: function () {'use strict'; return [840 - (this.collisionBox.width() / 2), 440 - (this.collisionBox.height() / 2)]; },
