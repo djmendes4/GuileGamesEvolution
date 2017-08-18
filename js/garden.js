@@ -1,172 +1,5 @@
 /*jslint devel: true */
 
-var Abilities = {
-	add: function (owner, ability) {
-		'use strict';
-
-		var newAbility = new Abilities.suffuseLife();
-		newAbility.setCaster(owner);
-		owner[newAbility.getName()] = newAbility;
-	},
-
-	suffuseLife: function () {
-		'use strict';
-
-		var name = 'suffuseLife',
-			caster = {},
-			cooldown = 5,
-			cooldownStart = new Date() - this.cooldown,
-			range = 200,
-			depletionTarget = null,
-			suffuseTarget = null;
-
-		return {
-			getName: function () {return name; },
-			setName: function (text) {
-				name = text;
-			},
-
-			getCaster: function () {return caster; },
-			setCaster: function (owner) {
-				caster = owner;
-			},
-
-			getCooldown: function () {return cooldown; },
-			setCooldown: function (time) {
-				cooldown = time;
-			},
-
-			getCooldownStart: function () {return cooldownStart; },
-			setCooldownStart: function (date) {
-				cooldownStart = date;
-			},
-
-			getRange: function () {return range; },
-			setRange: function (distance) {
-				range = distance;
-			},
-
-			getDepletionTarget: function () {return depletionTarget; },
-			setDepletionTarget: function (target) {
-				depletionTarget = target;
-			},
-
-			getSuffuseTarget: function () {return suffuseTarget; },
-			setSuffuseTarget: function (target) {
-				suffuseTarget = target;
-			},
-
-			cast: function () {
-				if (this.getCooldownStart() === null) {
-					this.setCooldownStart(new Date() - this.getCooldown());
-				}
-
-				if (!this.isOnCooldown()) {
-					console.log('Ability has been cast');
-					var i = 0;
-
-					for (i = 0; i < cns.plants.length; i += 1) {
-						if (!this.isOutOfRange(caster.getPosition(), cns.plants[i].getPosition())) {
-							cns.plants[i].getCollisionBox().element.addEventListener('click', caster.suffuseLife.selectDepletionTarget);
-							cns.plants[i].getCollisionBox().element.setAttribute('stroke', 'black');
-						}
-					}
-				}
-			},
-
-			isOnCooldown: function () {
-				var currentDate = new Date();
-
-				if (((currentDate - this.getCooldownStart()) / 1000) < this.getCooldown()) {
-					console.log('The ability has been on cooldown for: ' + ((currentDate - this.getCooldownStart()) / 1000) + 'seconds');
-					return true;
-				} else {
-					console.log('The ability is off cooldown');
-					this.setCooldownStart(currentDate);
-					return false;
-				}
-			},
-
-			isOutOfRange: function (t1, t2) {
-				var target1 = t1 || caster.getPosition(),
-					target2 = t2 || this.getDepletionTarget().getPosition(),
-					distance = [target2[0] - target1[0], target2[1] - target1[1]];
-
-				console.log(target1);
-				console.log(target2);
-
-				if (distance[0] * distance[0] + distance[1] * distance[1] <= this.getRange() * this.getRange()) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-
-			selectDepletionTarget: function (event) {
-				var i = 0;
-
-				for (i = 0; i < cns.plants.length; i += 1) {
-					if (cns.plants[i].getCollisionBox().element === event.target) {
-						caster.suffuseLife.setDepletionTarget(cns.plants[i]);
-						console.log(caster.suffuseLife.getDepletionTarget());
-						caster.suffuseLife.getDepletionTarget().getCollisionBox().element.setAttribute('stroke', 'red');
-					}
-				}
-
-				for (i = 0; i < cns.plants.length; i += 1) {
-					cns.plants[i].getCollisionBox().element.removeEventListener('click', caster.suffuseLife.selectDepletionTarget);
-					if (!caster.suffuseLife.isOutOfRange(caster.suffuseLife.getDepletionTarget().getPosition(), cns.plants[i].getPosition()) && cns.plants[i] !== caster.suffuseLife.getDepletionTarget()) {
-						cns.plants[i].getCollisionBox().element.addEventListener('click', caster.suffuseLife.selectSuffuseTarget);
-						cns.plants[i].getCollisionBox().element.setAttribute('stroke', 'blue');
-					}
-				}
-			},
-
-			selectSuffuseTarget: function (event) {
-				var i = 0;
-
-				for (i = 0; i < cns.plants.length; i += 1) {
-					if (cns.plants[i].getCollisionBox().element === event.target) {
-						caster.suffuseLife.setSuffuseTarget(cns.plants[i]);
-						console.log(caster.suffuseLife.getSuffuseTarget());
-					} else if (cns.plants[i] !== caster.suffuseLife.getDepletionTarget()) {
-						cns.plants[i].getCollisionBox().element.setAttribute('stroke', 'none');
-					}
-					cns.plants[i].getCollisionBox().element.removeEventListener('click', caster.suffuseLife.selectSuffuseTarget);
-				}
-
-				caster.suffuseLife.suffusion(caster.suffuseLife.getDepletionTarget(), caster.suffuseLife.getSuffuseTarget());
-			},
-
-			suffusion: function (deplete, suffuse) {
-//				var depletedAmount = deplete.getProgress() / deplete.getMaturityRate(),
-//					currentAmount = suffuse.getProgress() / suffuse.getMaturityRate();
-//
-//				deplete.setProgress(0);
-//				suffuse.setProgress((currentAmount + depletedAmount) * suffuse.getMaturityRate());
-
-				suffuse.setMaturityRateFactor(2);
-				deplete.setMaturityRateFactor(0);
-			}
-		};
-	},
-
-	speedBoost: function () {
-		'use strict';
-
-		var start = new Date(),
-			multiplier = 5,
-			originalSpeed = this.getMaxSpeed();
-
-		this.setMaxSpeed(multiplier * this.getMaxSpeed());
-
-		setTimeout(function () {
-			this.setMaxSpeed(originalSpeed);
-			this.speedBoost = null;
-		}.bind(this), 2000);
-	}
-};
-
 //OLD COMMITS
 
 var Plant = function (parent) {
@@ -403,7 +236,7 @@ var Abilities = {
 	add: function (owner, ability) {
 		'use strict';
 
-		var newAbility = new Abilities.suffuseLife();
+//		var newAbility = new Abilities.ability();
 		newAbility.setCaster(owner);
 		owner[newAbility.getName()] = newAbility;
 	},
@@ -553,15 +386,61 @@ var Abilities = {
 	speedBoost: function () {
 		'use strict';
 
-		var start = new Date(),
-			multiplier = 5,
-			originalSpeed = this.getMaxSpeed();
+		var name = 'speedBoost',
+			caster = {},
+			cooldown = 2,
+			cooldownStart = new Date() - this.cooldown,
+			speed = 1,
+			speedMultiplier = 2;
 
-		this.setMaxSpeed(multiplier * this.getMaxSpeed());
+		return {
+			getName: function () {return name; },
+			setName: function (text) {
+				name = text;
+			},
 
-		setTimeout(function () {
-			this.setMaxSpeed(originalSpeed);
-			this.speedBoost = null;
-		}.bind(this), 2000);
+			getCooldown: function () {return cooldown; },
+			setCooldown: function (time) {
+				cooldown = time;
+			},
+
+			getCooldownStart: function () {return cooldownStart; },
+			setCooldownStart: function (date) {
+				cooldownStart = date;
+			},
+
+			getSpeed: function () {return speed; },
+			setSpeed: function (rate) {
+				speed = rate;
+			},
+
+			cast: function () {
+				if (this.getCooldownStart() === null) {
+					this.setCooldownStart(new Date() - this.getCooldown());
+				}
+
+				if (!this.isOnCooldown()) {
+					console.log(this.getName() + ' has been cast!');
+					this.setCooldownStart = new Date();
+					this.setSpeed(speedMultiplier * this.getSpeed());
+
+					setTimeout(function () {
+						this.setSpeed(this.getSpeed() / speedMultiplier);
+					}.bind(this), 2000);
+				}
+			},
+
+			isOnCooldown: function () {
+				var currentDate = new Date();
+
+				if (((currentDate - this.getCooldownStart()) / 1000) < this.getCooldown()) {
+					console.log('This ability is on cooldown.' + '\n' + 'Cooldown: ' + this.getCooldown() + ' (' + ((currentDate - this.getCooldownStart()) / 1000) + ' seconds remaining)');
+					return true;
+				} else {
+					console.log('This ability is off cooldown');
+					return false;
+				}
+			}
+		};
 	}
 };

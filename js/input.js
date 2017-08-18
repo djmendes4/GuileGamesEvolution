@@ -3,12 +3,31 @@
 var Controller = function () {
 	'use strict';
 
-	var controlledPlayer = {};
+	var controlledPlayer = {},
+		cursorX = 0,
+		cursorY = 0,
+		count = 0;
 
 	return {
 		main: function () {
-			window.addEventListener('keydown', this.keyDownHandler);
-			window.addEventListener('keyup', this.keyUpHandler);
+			window.addEventListener('keydown', this, false);
+			window.addEventListener('keyup', this, false);
+			window.addEventListener('mousemove', this, false);
+		},
+
+		//NOTE: 'handleEvent' is a special function that is hard-coded to handle events.
+		handleEvent: function (event) {
+			switch (event.type) {
+			case 'keydown':
+				this.keyDownHandler(event);
+				break;
+			case 'keyup':
+				this.keyUpHandler(event);
+				break;
+			case 'mousemove':
+				this.mouseMoveHandler(event);
+				break;
+			}
 		},
 
 		keyDownHandler: function (event) {
@@ -27,15 +46,13 @@ var Controller = function () {
 				controlledPlayer.setDirection(1, null);
 				break;
 			case 32:
-				if (controlledPlayer.speedBoost === null || controlledPlayer.speedBoost === undefined) {
-					controlledPlayer.speedBoost = Abilities.speedBoost;
-					controlledPlayer.speedBoost();
-//					console.log('Speed Boost added');
-//					console.log(controlledPlayer);
-				}
+				controlledPlayer.speedBoost.cast();
 				break;
 			case 49:
 				controlledPlayer.suffuseLife.cast();
+				break;
+			case 50:
+				controlledPlayer.teleport.cast();
 				break;
 			}
 			controlledPlayer.setVelocity();
@@ -54,6 +71,17 @@ var Controller = function () {
 				break;
 			}
 			controlledPlayer.setVelocity();
+		},
+
+		mouseMoveHandler: function (event) {
+			if (count < 25) {
+				count += 1;
+				console.log(count);
+			} else {
+				count = 0;
+				console.log(count);
+				window.removeEventListener('mousemove', this, false);
+			}
 		},
 
 		attachToPlayer: function (player) {

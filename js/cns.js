@@ -20,6 +20,9 @@ player1.setColor('green');
 
 Abilities.add(player1, Abilities.suffuseLife);
 //console.log(player1);
+Abilities.add(player1, Abilities.speedBoost);
+Abilities.add(player1, Abilities.teleport);
+//console.log(player1);
 
 var controller1 = new Controller();
 controller1.main();

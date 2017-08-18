@@ -234,7 +234,7 @@ var Abilities = {
 	add: function (owner, ability) {
 		'use strict';
 
-		var newAbility = new Abilities.suffuseLife();
+		var newAbility = new ability();
 		newAbility.setCaster(owner);
 		owner[newAbility.getName()] = newAbility;
 	},
@@ -384,15 +384,131 @@ var Abilities = {
 	speedBoost: function () {
 		'use strict';
 
-		var start = new Date(),
-			multiplier = 5,
-			originalSpeed = this.getMaxSpeed();
+		var name = 'speedBoost',
+			caster = {},
+			cooldown = 2000,
+			cooldownStart = new Date() - this.cooldown,
+			speed = 1,
+			speedMultiplier = 2;
 
-		this.setMaxSpeed(multiplier * this.getMaxSpeed());
+		return {
+			getName: function () {return name; },
+			setName: function (text) {
+				name = text;
+			},
 
-		setTimeout(function () {
-			this.setMaxSpeed(originalSpeed);
-			this.speedBoost = null;
-		}.bind(this), 2000);
+			getCaster: function () {return caster; },
+			setCaster: function (owner) {
+				caster = owner;
+			},
+
+			getCooldown: function () {return cooldown; },
+			setCooldown: function (time) {
+				cooldown = time;
+			},
+
+			getCooldownStart: function () {return cooldownStart; },
+			setCooldownStart: function (date) {
+				cooldownStart = date;
+			},
+
+			getSpeed: function () {return speed; },
+			setSpeed: function (rate) {
+				speed = rate;
+			},
+
+			cast: function () {
+				if (this.getCooldownStart() === null) {
+					this.setCooldownStart(new Date() - this.getCooldown());
+				}
+
+				if (!this.isOnCooldown()) {
+					console.log(this.getName() + ' has been cast!');
+					this.setCooldownStart = new Date();
+					caster.setSpeed(speedMultiplier * caster.getSpeed());
+
+					setTimeout(function () {
+						caster.setSpeed(caster.getSpeed() / speedMultiplier);
+						caster.setVelocity();
+					}.bind(this), cooldown);
+				}
+			},
+
+			isOnCooldown: function () {
+				var currentDate = new Date();
+
+				if (((currentDate - this.getCooldownStart()) / 1000) < this.getCooldown()) {
+					console.log('This ability is on cooldown.' + '\n' + 'Cooldown: ' + this.getCooldown() + ' (' + ((currentDate - this.getCooldownStart()) / 1000) + ' seconds remaining)');
+					return true;
+				} else {
+					console.log('This ability is off cooldown');
+					return false;
+				}
+			}
+		};
+	},
+
+	teleport: function () {
+		'use strict';
+
+		var name = 'teleport',
+			caster = {},
+			cooldown = 10000,
+			cooldownStart = new Date() - this.cooldown,
+			distance = 0;
+
+		return {
+			getName: function () {return name; },
+			setName: function (text) {
+				name = text;
+			},
+
+			getCaster: function () {return caster; },
+			setCaster: function (owner) {
+				caster = owner;
+			},
+
+			getCooldown: function () {return cooldown; },
+			setCooldown: function (time) {
+				cooldown = time;
+			},
+
+			getCooldownStart: function () {return cooldownStart; },
+			setCooldownStart: function (date) {
+				cooldownStart = date;
+			},
+
+			getDistance: function () {return distance; },
+			setDistance: function (length) {
+				distance = length;
+			},
+
+			cast: function () {
+				if (this.getCooldownStart() === null) {
+					this.setCooldownStart(new Date() - this.getCooldown());
+				}
+
+				if (!this.isOnCooldown()) {
+					console.log(this.getName() + ' has been cast!');
+					this.setCooldownStart = new Date();
+					// In reality:
+					// if ('distance from position to teleport location' is less than 'teleportation spell maximum distance') {teleport}
+					// else {determine a unit vector, break into x & y components and multiply by the 'teleportation spell maximum distance'}
+					caster.setPosition(300, 300);
+				}
+			},
+
+			isOnCooldown: function () {
+				var currentDate = new Date();
+
+				if (((currentDate - this.getCooldownStart()) / 1000) < this.getCooldown()) {
+					console.log('This ability is on cooldown.' + '\n' + 'Cooldown: ' + this.getCooldown() + ' (' + ((currentDate - this.getCooldownStart()) / 1000) + ' seconds remaining)');
+					return true;
+				} else {
+					console.log('This ability is off cooldown');
+					return false;
+				}
+			}
+		};
 	}
 };

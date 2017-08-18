@@ -8,7 +8,7 @@ var Player = function (parent) {
 		position = [250, 250],
 		radius = 35,
 		color = '',
-		maxSpeed = 250,
+		speed = 250,
 		direction = [0, 0],
 		velocity = [0, 0];
 
@@ -58,8 +58,8 @@ var Player = function (parent) {
 				vy = 0;
 
 			if (unit !== 0) {
-				vx = this.getDirection()[0] / unit * maxSpeed;
-				vy = this.getDirection()[1] / unit * maxSpeed;
+				vx = this.getDirection()[0] / unit * speed;
+				vy = this.getDirection()[1] / unit * speed;
 			}
 
 			velocity = [vx, vy];
@@ -69,12 +69,12 @@ var Player = function (parent) {
 			return velocity;
 		},
 
-		setMaxSpeed: function (magnitude) {
-			maxSpeed = magnitude;
+		setSpeed: function (magnitude) {
+			speed = magnitude;
 		},
 
-		getMaxSpeed: function () {
-			return maxSpeed;
+		getSpeed: function () {
+			return speed;
 		},
 
 		setColor: function (hue) {
